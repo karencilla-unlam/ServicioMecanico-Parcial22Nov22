@@ -5,7 +5,7 @@ import java.util.Set;
 
 public class ServicioMecanico {
 	private Set<Cliente> clientes = new HashSet<Cliente>();
-	private Integer cantclientesatendidos;
+	private Integer cantclientesatendidos=0;
 	
 	
 	public void nuevoCliente(Cliente nuevoCliente) {
@@ -13,40 +13,52 @@ public class ServicioMecanico {
 	}
 	
 	
-	public Cliente atenderCliente() throws ClienteNoAtendidoException {
-		for (Cliente actual : this.Clientes) {
-			if (actual.getFueatendido().equals(false)) {
-				this.actual.setFueatendido(true));
-				this.cantclientesatendidos++;
-				return actual;
-			}
-			else {
-			throw new ClienteNoAtendidoException("No hay clientes para atender");
-			}
-		}		
+	public Cliente atenderCliente() throws NoHayClientesQueAtenderException {
+		Cliente clienteAtendido=null;
+		if(this.clientes.isEmpty()) {
+			throw new NoHayClientesQueAtenderException("No hay clientes para atender");
+		} 
+		else {
+			for (Cliente actual : this.clientes) {
+				if (actual.getFueatendido().equals(false)) {
+					actual.setFueatendido(true);
+					actual.setFhatencion(Reloj.ahora());
+					this.cantclientesatendidos++;
+					clienteAtendido=actual;
+					return clienteAtendido;
+				}
+			}	
+		}
+		return clienteAtendido;
 	}
 	
-	public Double tiempoDeEsperaAtendidos() {
-		Double tiempodeesperatotalatendidos=0;
-		for (Cliente actual : this.Clientes) {
-			if(actual.getFueatendido().equals(true))
-				tiempodeesperatotalnoatendidos+=(Double)(actual.getFhllegada())-(actual.getFhatencion());
+	public Long tiempoDeEsperaAtendidos() {
+		Long tiempodeesperatotalatendidos=0L;
+		Long cantidadClientesAtendidos=0L;
+		for (Cliente actual : this.clientes) {
+			if(actual.getFueatendido().equals(true)) {
+				tiempodeesperatotalatendidos+=actual.getFhatencion() - actual.getFhllegada();
+				cantidadClientesAtendidos++;
+			}
 		}
-		return (Double)tiempodeesperatotalatendidos/60000;
+		return tiempodeesperatotalatendidos/(cantidadClientesAtendidos*60000);
 	}
 	
-	public Double tiempoDeEsperaNoAtendidos() {
-		Double tiempodeesperatotalnoatendidos=0;
-		for (Cliente actual : this.Clientes) {
-			if(actual.getFueatendido().equals(false))
-				tiempodeesperatotalnoatendidos+=Double)(actual.getFhllegada())-(actual.getFhatencion());
+	public Long tiempoDeEsperaNoAtendidos() {
+		Long tiempodeesperatotalnoatendidos=0L;
+		Long cantidadClientesNoAtendidos=0L;
+		for (Cliente actual : this.clientes) {
+			if(actual.getFueatendido().equals(false)) {
+				tiempodeesperatotalnoatendidos+=actual.getFhatencion() - actual.getFhllegada();
+				cantidadClientesNoAtendidos++;
+			}
 		}
-		return (Double)tiempodeesperatotalnoatendidos/60000;
+		return tiempodeesperatotalnoatendidos/(cantidadClientesNoAtendidos*60000);
 	}
 	
 	public Integer obtenerCantidadClientesAtendidos() {
 		Integer cantclientesatendidos=0;
-		for (Cliente actual : this.Clientes) {
+		for (Cliente actual : this.clientes) {
 			if (actual.getFueatendido().equals(true)) {
 				cantclientesatendidos++;
 			}
@@ -57,7 +69,7 @@ public class ServicioMecanico {
 	
 	public Integer obtenerCantidadClientesEnEspera() {
 		Integer cantclientesenespera=0;
-		for (Cliente actual : this.Clientes) {
+		for (Cliente actual : this.clientes) {
 			if (actual.getFueatendido().equals(false)) {
 				cantclientesenespera++;
 			}
@@ -93,6 +105,5 @@ public class ServicioMecanico {
 		this.clientes = clientes;
 		this.cantclientesatendidos = cantclientesatendidos;
 	}
-	
-	
+
 }
